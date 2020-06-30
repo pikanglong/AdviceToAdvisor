@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title>管理面板</title>
+
+        <link rel="stylesheet" href="/asserts/css/mdui.min.css">
+        <link rel="stylesheet" href="/asserts/css/Chart.min.css">
+
+        <script type="text/javascript" src="/asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/mdui.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/Chart.min.js"></script>
+
+        <style>
+            @-webkit-keyframes chartjs-render-animation {
+                from {
+                    opacity: 0.99
+                }
+                to {
+                    opacity: 1
+                }
+            }
+
+            @keyframes chartjs-render-animation {
+                from {
+                    opacity: 0.99
+                }
+                to {
+                    opacity: 1
+                }
+            }
+
+            .chartjs-render-monitor {
+                -webkit-animation: chartjs-render-animation 0.001s;
+                animation: chartjs-render-animation 0.001s;
+            }
+        </style>
+    </head>
+
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <div th:replace="layout(active='admin')"></div>
+        <div class="mdui-container">
+            <div class="mdui-p-t-2">
+                <select id="dropdownMenuButton" class="mdui-select" onchange="changeChart(); changeTable();" mdui-select="{position: 'bottom'}" sec:authorize="hasRole('ADMIN')">
+                    <option>所有学院</option>
+                    <option th:each="c:${colleges}">[[${c.college}]]</option>
+                </select>
+            </div>
+
+            <canvas class="chartjs-render-monitor" id="myChart"></canvas>
+
+            <h1 class="mdui-text-center">各导员成绩详情</h1>
+
+            <table id="table" class="mdui-table mdui-table-hoverable mdui-m-b-4" data-toggle="table" data-locale="zh-CN">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" data-sortable=true>学院</th>
+                        <th scope="col" data-sortable=true>辅导员</th>
+                        <th scope="col" data-sortable=true th:each="p:${problems}" th:if="${p.type==1}">[[${p.rank}]]</th>
+                        <th scope="col" data-sortable=true>总分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t:${table}">
+                        <td>[[${t.rank}]]</td>
+                        <td>[[${t['college']}]]</td>
+                        <td>[[${t['advisor']}]]</td>
+                        <td th:each="s:${t.score}">[[${#numbers.formatDecimal(s,1,2)}]]</td>
+                        <td>[[${#numbers.formatDecimal(t['totalScore'],1,2)}]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script type="text/javascript">
+            /*<![CDATA[*/
+            var labels = [(${collegeNames})];
+            var data = [(${collegeCounts})];
+            /*]]>*/
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        lineTension: 0,
+                        backgroundColor: '#2196f3',
+                        borderColor: '#2196f3',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#2196f3'
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        fontSize: 36,
+                        text: '各学院完成人数',
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                userCallback: function (label, index, labels) {
+                                    if (Math.floor(label) === label) {
+                                        return label;
+                                    }
+                                }
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false,
+                    },
+                    hover: {
+                        "animationDuration": 0
+                    },
+                    animation: {
+                        onComplete: function () {
+                            var chartInstance = this.chart,
+                                ctx = chartInstance.ctx;
+                            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                            ctx.fillStyle = "black";
+                            ctx.textAlign = 'start';
+                            ctx.textBaseline = 'middle';
+
+                            this.data.datasets.forEach(function (dataset, i) {
+                                var meta = chartInstance.controller.getDatasetMeta(i);
+                                meta.data.forEach(function (bar, index) {
+                                    var data = dataset.data[index];
+                                    ctx.fillText(data, bar._model.x+5, bar._model.y);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+
+            function addData(chart, label, data) {
+                chart.data.labels = label;
+                chart.data.datasets.forEach((dataset) => {
+                    dataset.data = data;
+                });
+                chart.update();
+            }
+
+            function removeData(chart) {
+                while(chart.data.labels.length) {
+                    chart.data.labels.pop();
+                    chart.data.datasets.forEach((dataset) => {
+                        dataset.data.pop();
+                    });
+                }
+                chart.update();
+            }
+
+            function changeChart() {
+                var select = document.getElementById("dropdownMenuButton");
+                var index = select.selectedIndex;
+                var text = select.options[index].text;
+                $.ajax({
+                    url:'/api/changechart',
+                    data:{
+                        collegeName: text
+                    },
+                    success: function (data) {
+                        removeData(myChart);
+                        addData(myChart, data.labels, data.data);
+                        return ;
+                    }
+                })
+            }
+
+            function changeTable() {
+                var select = document.getElementById("dropdownMenuButton");
+                var index = select.selectedIndex;
+                var text = select.options[index].text;
+                $.ajax({
+                    url:'/api/changetable',
+                    data:{
+                        collegeName: text
+                    },
+                    success: function (data) {
+                        var t=document.getElementById('table');
+                        var tbs=t.getElementsByTagName('tbody');
+                        t.removeChild(tbs[0]);
+                        $node = '<tbody>';
+                        data.forEach(function (value) {
+                            $node += '<tr>'
+                                +'<th scope="row">' + value['rank'] + '</th>'
+                                +'<td>' + value['college'] + '</td>'
+                                +'<td>' + value['advisor'] + '</td>';
+                            value.score.forEach(function (scoreValue) {
+                                $node += '<td>' + scoreValue.toFixed(2) + '</td>';
+                            });
+                            $node += '<td>' + value['totalScore'].toFixed(2) + '</td>'
+                                +'</tr>';
+                        });
+                        $node += '</tbody>';
+                        $("thead").after($node);
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>

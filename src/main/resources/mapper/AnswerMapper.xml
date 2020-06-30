@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pikanglong.advicetoadvisor.mapper.AnswerMapper">
+    <select id="getAnswersByCsrf" resultType="com.pikanglong.advicetoadvisor.entity.AnswerEntity">
+        SELECT * FROM answers WHERE _csrf=#{csrf} AND deletedAt IS NULL;
+    </select>
+
+    <insert id="insertAnswers" parameterType="java.util.List">
+        INSERT INTO answers (problemId,content,advisorId,_csrf,createdAt,updatedAt) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.problemId},#{item.content},#{item.advisorId},#{item._csrf},NOW(),NOW())
+        </foreach>
+    </insert>
+
+    <select id="getAnswersByAdvisorId" resultType="com.pikanglong.advicetoadvisor.entity.AnswerEntity">
+        SELECT * FROM answers WHERE advisorId=#{advisorId} AND deletedAt IS NULL;
+    </select>
+
+    <update id="deleteAnswersByProblemId">
+        UPDATE answers SET deletedAt=NOW();
+    </update>
+
+    <update id="deleteAnswersByAdvisorId">
+        UPDATE answers SET deletedAt=NOW() WHERE advisorId=#{id};
+    </update>
+</mapper>

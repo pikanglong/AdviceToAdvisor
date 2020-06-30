@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pikanglong.advicetoadvisor.mapper.UserMapper">
+    <cache></cache>
+
+    <insert id="insertUser">
+        INSERT INTO users (username,password,enabled,college,`count`,createdAt,updatedAt) VALUES (#{username},#{password},#{enabled},#{college},#{count},NOW(),NOW());
+    </insert>
+
+    <insert id="insertAuthority">
+        INSERT INTO authorities (username,authority,createdAt,updatedAt) VALUES (#{username},#{authority},NOW(),NOW());
+    </insert>
+
+    <select id="selectUserByUsernameAll" resultType="com.pikanglong.advicetoadvisor.entity.UserEntity">
+        SELECT * FROM users WHERE username=#{username};
+    </select>
+
+    <select id="selectUserByUsername" resultType="com.pikanglong.advicetoadvisor.entity.UserEntity">
+        SELECT * FROM users WHERE username=#{username} AND deletedAt IS NULL;
+    </select>
+
+    <select id="selectAuthorityByUsername" resultType="com.pikanglong.advicetoadvisor.entity.AuthorityEntity">
+        SELECT * FROM authorities WHERE username=#{username} AND deletedAt IS NULL;
+    </select>
+
+    <select id="selectUsers" resultType="com.pikanglong.advicetoadvisor.entity.UserEntity">
+        SELECT * FROM users WHERE deletedAt IS NULL;
+    </select>
+
+    <select id="selectUserByCollege" resultType="com.pikanglong.advicetoadvisor.entity.UserEntity">
+        SELECT * FROM users WHERE college=#{college} AND deletedAt IS NULL;
+    </select>
+
+    <update id="updateUser">
+        UPDATE users SET password=#{password}, college=#{college}, enabled=#{enabled}, updatedAt=NOW() WHERE username=#{username};
+    </update>
+
+    <select id="selectColleges" resultType="com.pikanglong.advicetoadvisor.entity.UserEntity">
+        SELECT * FROM users WHERE college IS NOT NULL AND deletedAt IS NULL ORDER BY createdAt ASC;
+    </select>
+
+    <update id="deleteAuthority">
+        UPDATE authorities SET deletedAt=NOW() WHERE username=#{username};
+    </update>
+
+    <update id="deleteUser">
+        UPDATE users SET enabled=0, deletedAt=NOW() WHERE username=#{username};
+    </update>
+
+    <update id="increaseCollegeCount">
+        UPDATE users SET `count`=`count`+1 WHERE college=#{college} AND deletedAt IS NULL;
+    </update>
+</mapper>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title>问卷详情</title>
+
+        <link rel="stylesheet" href="/asserts/css/mdui.min.css">
+        <link rel="stylesheet" href="/asserts/css/Chart.min.css">
+
+        <script type="text/javascript" src="/asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/mdui.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/Chart.min.js"></script>
+    </head>
+
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <div th:replace="layout(active='advisor')"></div>
+        <div class="mdui-container">
+            <div class="mdui-typo">
+                <h1>[[${advisor.advisor}]]<span>（[[${#numbers.formatDecimal(totalScore,1,2)}]]分）</span></h1>
+                <h2>[[${advisor.college}]]</h2>
+            </div>
+            <div th:each="p:${problems}">
+                <p><strong><span th:if="${p.type==1}">（[[${#numbers.formatDecimal(score[p.id],1,2)}]]分）</span>[[${p.rank}]]、[[${p.content}]]<span style="color: red;"> *</span></strong></p>
+                <div th:if="${p.type==1}">
+                    <canvas class="chartjs-render-monitor" th:id="${p.id}" style="display: block; width: 300px; height: 150px;" width="300" height="150"></canvas>
+                    <script>
+                        /*<![CDATA[*/
+                        var labels = [(${labels[p.id]})];
+                        var data = [(${data[p.id]})];
+                        var id = [[${p.id}]];
+                        /*]]>*/
+                        var ctx = document.getElementById(id);
+                        var myChart = new Chart(ctx, {
+                            type: 'horizontalBar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    data: data,
+                                    lineTension: 0,
+                                    backgroundColor: '#2196f3',
+                                    borderColor: '#2196f3',
+                                    pointBackgroundColor: '#2196f3'
+                                }]
+                            },
+                            options: {
+                                responsive: false,
+                                scales: {
+                                    xAxes: [{
+                                        ticks: {
+                                            beginAtZero: true,
+                                            userCallback: function (label, index, labels) {
+                                                if (Math.floor(label) === label) {
+                                                    return label;
+                                                }
+                                            }
+                                        }
+                                    }]
+                                },
+                                legend: {
+                                    display: false,
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+                <div th:if="${p.type==2}" class="mdui-row">
+                    <div th:each="c:${comments[p.id]}" class="mdui-card mdui-col-md-3">
+                        <div class="mdui-card-content">
+                            [[${c}]]
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>

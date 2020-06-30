@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title>安装</title>
+
+        <link rel="stylesheet" href="asserts/css/mdui.min.css">
+
+        <style>
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -ms-flex-align: center;
+                -ms-flex-pack: center;
+                -webkit-box-align: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                justify-content: center;
+            }
+
+            form {
+                width: 100%;
+                max-width: 500px;
+                padding: 15px;
+                margin: 0 auto;
+                text-align: left;
+            }
+
+            #submit {
+                float: right;
+            }
+        </style>
+    </head>
+    <body class="mdui-color-grey-300 mdui-text-center mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <div class="mdui-container">
+            <img class="mb-4" src="asserts/images/njupt.png" alt="" width="72" height="72">
+            <h1>欢迎安装南京邮电大学辅导员评议系统</h1>
+            <form>
+                <input type="hidden" name=${_csrf.parameterName} value=${_csrf.token}>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label" for="password1">您的管理员用户名是「admin」，请为其设置一个密码。</label>
+                    <input class="mdui-textfield-input" type="password" name="password" id="password1" required>
+                </div>
+                <div id="textfield" class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label" for="password2">请重复您的密码</label>
+                    <input class="mdui-textfield-input" type="password" name="password" id="password2" required>
+                    <div id="error" class="mdui-textfield-error"></div>
+                </div>
+                <button id="submit" class="mdui-btn mdui-color-theme-accent" type="button">确定</button>
+            </form>
+        </div>
+
+        <script type="text/javascript" src="asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="asserts/js/mdui.min.js"></script>
+
+        <script type="text/javascript">
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var $textfield = $("#textfield");
+            var $password1 = $("#password1");
+            var $password2 = $("#password2");
+            var $error = $("#error");
+            var hasError = false;
+
+            $("#submit").on('click', function() {
+                var $password1value = $password1.val();
+                var $password2value = $password2.val();
+
+                if(typeof $password1value == "undefined" || $password1value == null || $password1value == "" || typeof $password2value == "undefined" || $password2value == null || $password2value == "") {
+                    $error.text("请不要输入空白");
+                    hasError = true;
+                } else if ($password1value != $password2value) {
+                    $error.text("两次输入的密码不一致");
+                    hasError = true;
+                } else {
+                    hasError = false;
+                }
+
+                if(hasError) {
+                    $textfield.addClass('mdui-textfield-invalid');
+                } else {
+                    $textfield.removeClass('mdui-textfield-invalid');
+                    $.ajax({
+                        type: "post",
+                        url: "/api/install",
+                        data: {
+                            password: $password1value
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function (data) {
+                            const jump = () => window.location.href="/admin";
+                            mdui.confirm('即将前往管理面板', '安装成功！', jump, null, {
+                                history: false,
+                                confirmText: '确认',
+                                cancelText: '取消'});
+                        }
+                    })
+                }
+            })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pikanglong.advicetoadvisor.mapper.AdvisorMapper">
+    <cache></cache>
+
+    <insert id="insertAdvisors" parameterType="java.util.List">
+        INSERT INTO advisors (advisor,college,`count`,createdAt,updatedAt) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.advisor},#{item.college},0,NOW(),NOW())
+        </foreach>
+    </insert>
+
+    <select id="selectAdvisors" resultType="com.pikanglong.advicetoadvisor.entity.AdvisorEntity">
+        SELECT * FROM advisors WHERE deletedAt IS NULL;
+    </select>
+
+    <select id="selectAdvisorsByCollege" resultType="com.pikanglong.advicetoadvisor.entity.AdvisorEntity">
+        SELECT * FROM advisors WHERE college=#{college} AND deletedAt IS NULL;
+    </select>
+
+    <select id="selectAdcisorById" resultType="com.pikanglong.advicetoadvisor.entity.AdvisorEntity">
+        SELECT * FROM advisors WHERE id=#{id} AND deletedAt IS NULL;
+    </select>
+
+    <update id="updateAdvisor">
+        UPDATE advisors SET advisor=#{advisor}, college=#{college}, updatedAt=NOW() WHERE id=#{id} AND deletedAt IS NULL;
+    </update>
+
+    <update id="deleteAdvisor">
+        UPDATE advisors SET deletedAt=NOW() WHERE id=#{id};
+    </update>
+
+    <select id="selectAdvisorByCollegeAndAdvisor" resultType="com.pikanglong.advicetoadvisor.entity.AdvisorEntity">
+        SELECT * FROM advisors WHERE college=#{college} AND advisor=#{advisor} AND deletedAt IS NULL;
+    </select>
+
+    <update id="increaseAdvisorCount">
+        UPDATE advisors SET `count`=`count`+1 WHERE id=#{id} AND deletedAt IS NULL;
+    </update>
+</mapper>

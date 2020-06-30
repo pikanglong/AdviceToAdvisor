@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pikanglong.advicetoadvisor.mapper.ProblemMapper">
+    <cache></cache>
+
+    <select id="selectOptionsByProblemId" resultType="com.pikanglong.advicetoadvisor.entity.OptionEntity">
+        SELECT * FROM options WHERE problemId=#{problemId} AND deletedAt IS NULL;
+    </select>
+
+    <resultMap id="selectProblemsResultMap" type="com.pikanglong.advicetoadvisor.entity.ProblemEntity">
+        <id column="id" property="id"></id>
+        <result column="rank" property="rank"></result>
+        <result column="content" property="content"></result>
+        <result column="type" property="type"></result>
+        <result column="createdAt" property="createdAt"></result>
+        <result column="updatedAt" property="updatedAt"></result>
+        <result column="deletedAt" property="deletedAt"></result>
+        <association property="optionEntities"
+                     select="com.pikanglong.advicetoadvisor.mapper.ProblemMapper.selectOptionsByProblemId"
+                     column="id">
+        </association>
+    </resultMap>
+    <select id="selectProblems" resultMap="selectProblemsResultMap">
+        SELECT * FROM problems WHERE deletedAt IS NULL;
+    </select>
+
+    <update id="deleteProblems">
+        UPDATE problems SET deletedAt=NOW();
+    </update>
+
+    <update id="deleteOptions">
+        UPDATE options SET deletedAt=NOW();
+    </update>
+
+    <insert id="insertProblem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO problems (`rank`,content,`type`,createdAt,updatedAt) VALUES (#{rank},#{content},#{type},NOW(),NOW());
+    </insert>
+
+    <insert id="insertOptions" parameterType="java.util.List">
+        INSERT INTO options (problemId,`rank`,score,content,createdAt,updatedAt) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.problemId},#{item.rank},#{item.score},#{item.content},NOW(),NOW())
+        </foreach>
+    </insert>
+
+    <select id="selectOptionsByProblemIdOrderByScoreDESC" resultType="com.pikanglong.advicetoadvisor.entity.OptionEntity">
+        SELECT * FROM options WHERE problemId=#{id} AND deletedAt IS NULL ORDER BY score DESC;
+    </select>
+
+    <select id="selectOptionByAnswer" resultType="com.pikanglong.advicetoadvisor.entity.OptionEntity">
+        SELECT * FROM options WHERE problemId=#{problemId} AND `rank`=#{content} AND deletedAt IS NULL;
+    </select>
+</mapper>

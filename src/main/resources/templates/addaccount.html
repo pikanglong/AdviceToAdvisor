@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title th:text="${user!=null}?'修改账号':'添加账号'"></title>
+
+        <link rel="stylesheet" href="/asserts/css/mdui.min.css">
+
+        <script type="text/javascript" src="/asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/mdui.min.js"></script>
+    </head>
+
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <div th:replace="layout(active='account')"></div>
+        <div class="mdui-container">
+            <p style="color: red;" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+            <form th:action="${user!=null}?@{/api/account/edit}:@{/api/account/add}" method="post">
+                <input type="hidden" name="username" th:if="${user!=null}" th:value="${user.username}">
+                <div th:if="${user!=null}" class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">用户名</label>
+                    <input class="mdui-textfield-input" type="text" name="username" disabled th:value="${user.username}">
+                </div>
+                <div th:if="${user==null}" class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">用户名</label>
+                    <input class="mdui-textfield-input" type="text" name="username">
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">密码</label>
+                    <input class="mdui-textfield-input" type="password" name="password">
+                    <div class="mdui-textfield-helper" th:if="${user!=null && user.username!='admin'}">密码为空则不修改</div>
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label" th:if="${user==null || user.username!='admin'}">
+                    <label class="mdui-textfield-label">学院</label>
+                    <input class="mdui-textfield-input" type="text" name="college" th:value="${user!=null}?${user.college}">
+                </div>
+                <div th:if="${user==null || user.username!='admin'}">
+                    <label>是否启用</label>
+                    <br>
+                    <div class="mdui-col">
+                        <label class="mdui-radio">
+                            <input type="radio" name="enabled" value="1" th:checked="${user!=null}?${user.enabled==true}">
+                            <i class="mdui-radio-icon"></i>
+                            是
+                        </label>
+                    </div>
+                    <div class="mdui-col">
+                        <label class="mdui-radio">
+                            <input type="radio" name="enabled" value="0" th:checked="${user!=null}?${user.enabled==false}">
+                            <i class="mdui-radio-icon"></i>
+                            否
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="mdui-btn mdui-color-theme" th:text="${user!=null}?'修改':'添加'"></button>
+                <button type="button" class="mdui-btn mdui-color-teal" onclick="window.location.href='/account';">取消</button>
+            </form>
+        </div>
+    </body>
+</html>

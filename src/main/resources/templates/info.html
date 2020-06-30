@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title th:text="${title}"></title>
+
+        <link rel="stylesheet" href="/asserts/css/mdui.min.css">
+
+        <script type="text/javascript" src="/asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/mdui.min.js"></script>
+    </head>
+
+    <body class="mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <img class="mdui-img-fluid mdui-center" src="/asserts/images/head.png">
+        <div class="mdui-container mdui-typo">
+            <h1 th:text="${title}"></h1>
+            <p th:text="${content}"></p>
+        </div>
+    </body>
+</html>

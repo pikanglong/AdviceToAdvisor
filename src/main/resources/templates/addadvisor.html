@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+        <title th:text="${user!=null}?'修改导员':'添加导员'"></title>
+
+        <link rel="stylesheet" href="/asserts/css/mdui.min.css">
+
+        <script type="text/javascript" src="/asserts/js/jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/asserts/js/mdui.min.js"></script>
+    </head>
+
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-blue">
+        <div th:replace="layout(active='advisor')"></div>
+        <div class="mdui-container">
+            <p style="color: red;" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+            <form th:action="${advisor!=null}?@{/api/advisor/edit}:@{/api/advisor/add}" method="post">
+                <input type="hidden" name="id" th:if="${advisor!=null}" th:value="${advisor.id}">
+                <div th:if="${advisor!=null}" class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">ID</label>
+                    <input class="mdui-textfield-input" type="text" name="id" disabled th:value="${advisor.id}">
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">姓名</label>
+                    <input class="mdui-textfield-input" type="text" name="advisor" required th:value="${advisor!=null}?${advisor.advisor}">
+                    <div class="mdui-textfield-helper" th:if="${advisor==null}">批量导入请用中文分号将姓名隔开</div>
+                </div>
+                <div sec:authorize="hasRole('ADMIN')" style="padding-bottom: 24px;">
+                    <label class="mdui-textfield-label">学院</label>
+                    <select class="mdui-select" mdui-select="{position: 'bottom'}" name="college" required>
+                        <option th:each="c:${colleges}" th:selected="${advisor!=null}?${c == advisor.college}" th:value="${c}" th:text="${c}"></option>
+                    </select>
+                </div>
+                <div sec:authorize="hasRole('USER')" style="padding-bottom: 24px;">
+                    <label class="mdui-textfield-label">学院</label>
+                    <input class="mdui-textfield-input" type="text" name="college" th:value="${college}" required>
+                </div>
+                <button type="submit" class="mdui-btn mdui-color-theme" th:text="${advisor!=null}?'修改':'添加'"></button>
+                <button type="button" class="mdui-btn mdui-color-teal" onclick="window.location.href='/account';">取消</button>
+            </form>
+        </div>
+    </body>
+</html>
