@@ -10,6 +10,7 @@
     </parent>
     <groupId>com.pikanglong</groupId>
     <artifactId>advicetoadvisor</artifactId>
+    <packaging>jar</packaging>
     <version>1.0.0</version>
     <name>advicetoadvisor</name>
     <description>南京邮电大学辅导员评议</description>
@@ -86,6 +87,7 @@
     </dependencies>
 
     <build>
+        <finalName>advicetoadvisor</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
