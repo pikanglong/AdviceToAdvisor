@@ -18,7 +18,7 @@
         SELECT * FROM answers WHERE advisorId=#{advisorId} AND deletedAt IS NULL;
     </select>
 
-    <update id="deleteAnswersByProblemId">
+    <update id="deleteAnswers">
         UPDATE answers SET deletedAt=NOW();
     </update>
 
