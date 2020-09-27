@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -122,7 +119,7 @@ public class ExcelController {
                 advisorList.add(exportAdvisorEntity);
             }
             String fileName = "辅导员成绩详情.xlsx";
-            response.setHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
+            response.setHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
             response.setContentType("application/octet-stream");
             OutputStream out = response.getOutputStream();
             excelService.writeExcel(out, ExportAdvisorEntity.class, advisorList, 1);
@@ -147,7 +144,7 @@ public class ExcelController {
                 exportCollegeList.add(e);
             }
             String fileName = "各学院完成人数.xlsx";
-            response.setHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
+            response.setHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
             response.setContentType("application/octet-stream");
             OutputStream out = response.getOutputStream();
             excelService.writeExcel(out, ExportCollegeEntity.class, exportCollegeList, 1);
