@@ -43,6 +43,7 @@ public class ExcelController {
 
     private final int TYPE_EVALUATE = 2;
 
+    //导出辅导员成绩详情
     @GetMapping("/advisorScore")
     @ResponseBody
     public void exportAdvisorScore(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
@@ -130,7 +131,8 @@ public class ExcelController {
         }
 
     }
-
+    
+    //导出各学院完成人数
     @GetMapping("/collegeCount")
     @ResponseBody
     public void collegeCount(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
@@ -155,6 +157,7 @@ public class ExcelController {
         }
     }
 
+    //导出问答问题回答
     @GetMapping("/advisorEvaluate")
     @ResponseBody
     public void advisorEvaluate(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
