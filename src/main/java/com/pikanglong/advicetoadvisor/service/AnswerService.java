@@ -14,4 +14,6 @@ public interface AnswerService {
     void insertAnswers(List<AnswerEntity> answerEntities);
 
     List<AnswerEntity> getAnswersByCollegeAndAdvisor(String college, String advisor);
+
+    public List<AnswerEntity> getAnswersByProblemId(int problem);
 }

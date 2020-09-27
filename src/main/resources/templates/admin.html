@@ -54,7 +54,7 @@
             <canvas class="chartjs-render-monitor" id="myChart"></canvas>
 
             <h1 class="mdui-text-center">各导员成绩详情</h1>
-
+            <button type="submit" class="mdui-btn mdui-color-theme" onclick="exportExcel()">export excel</button>
             <table id="table" class="mdui-table mdui-table-hoverable mdui-m-b-4" data-toggle="table" data-locale="zh-CN">
                 <thead>
                     <tr>
@@ -78,6 +78,12 @@
         </div>
 
         <script type="text/javascript">
+
+            function exportExcel(){
+                $.get("/export/advisorScore");
+                window.open("/export/advisorScore");
+                alert("asdfasdf");
+            }
             /*<![CDATA[*/
             var labels = [(${collegeNames})];
             var data = [(${collegeCounts})];

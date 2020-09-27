@@ -20,4 +20,6 @@ public interface AnswerMapper {
     void deleteAnswers();
 
     void deleteAnswersByAdvisorId(int id);
+
+    List<AnswerEntity> getAnswersByProblemId(int problem);
 }

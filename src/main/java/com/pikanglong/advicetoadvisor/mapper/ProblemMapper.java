@@ -28,4 +28,9 @@ public interface ProblemMapper {
     List<OptionEntity> selectOptionsByProblemIdOrderByScoreDESC(int problemId);
 
     OptionEntity selectOptionByAnswer(AnswerEntity answerEntity);
+
+    List<ProblemEntity> selectProblemsByType(int type);
+
+    ProblemEntity selectProblemById(int problemId);
+
 }
