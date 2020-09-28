@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,9 +45,9 @@ public class ExcelController {
     //导出辅导员成绩详情
     @GetMapping("/advisorScore")
     @ResponseBody
-    public void exportAdvisorScore(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
+    public void exportAdvisorScore(HttpServletResponse response, Principal principal) throws IOException {
         String authority = userService.getAuthority(principal);
-        if (authority.equals("ROLE_ADMIN")) {
+        if ("ROLE_ADMIN".equals(authority)) {
             List<ProblemEntity> problems = problemService.getProblems();
 
             List<Map<String, Object>> table = new ArrayList<>();
@@ -125,20 +124,16 @@ public class ExcelController {
             OutputStream out = response.getOutputStream();
             excelService.writeExcel(out, ExportAdvisorEntity.class, advisorList, 1);
             out.flush();
-            map.put("msg", "导出成功");
-        } else {
-            map.put("msg", "导出失败");
-        }
 
+        }
     }
-    
+
     //导出各学院完成人数
     @GetMapping("/collegeCount")
     @ResponseBody
-    public void collegeCount(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
-
+    public void collegeCount(HttpServletResponse response, Principal principal) throws IOException {
         String authority = userService.getAuthority(principal);
-        if (authority.equals("ROLE_ADMIN")) {
+        if ("ROLE_ADMIN".equals(authority)) {
             List<UserEntity> collegesList = userService.getCollegesEntites();
             List<ExportCollegeEntity> exportCollegeList = new ArrayList<>();
             for (UserEntity u : collegesList) {
@@ -151,19 +146,15 @@ public class ExcelController {
             OutputStream out = response.getOutputStream();
             excelService.writeExcel(out, ExportCollegeEntity.class, exportCollegeList, 1);
             out.flush();
-            map.put("msg", "导出成功");
-        } else {
-            map.put("msg", "导出失败");
         }
     }
 
     //导出问答问题回答
     @GetMapping("/advisorEvaluate")
     @ResponseBody
-    public void advisorEvaluate(HttpServletResponse response, Principal principal, Map<String, String> map) throws IOException {
-
+    public void advisorEvaluate(HttpServletResponse response, Principal principal) throws IOException {
         String authority = userService.getAuthority(principal);
-        if (authority.equals("ROLE_ADMIN")) {
+        if ("ROLE_ADMIN".equals(authority)) {
             List<ProblemEntity> problemList = problemService.getProblemEntity(TYPE_EVALUATE);
             List<List<AnswerEntity>> lists = new ArrayList<>();
             List<ExportAnswerEntity> exportAnswerList = new ArrayList<>();
@@ -186,10 +177,20 @@ public class ExcelController {
             OutputStream out = response.getOutputStream();
             excelService.writeExcel(out, ExportAnswerEntity.class, exportAnswerList, 1);
             out.flush();
+        }
+    }
+
+    @GetMapping("/authority")
+    @ResponseBody
+    public Map<String, String> authority(Principal principal) {
+        Map<String, String> map = new HashMap<>();
+        String authority = userService.getAuthority(principal);
+        if ("ROLE_ADMIN".equals(authority)) {
             map.put("msg", "导出成功");
         } else {
-            map.put("msg", "导出失败");
+            map.put("msg", "导出失败,请联系管理员");
         }
+        return map;
     }
 
 }

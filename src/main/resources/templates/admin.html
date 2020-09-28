@@ -51,10 +51,12 @@
                 </select>
             </div>
 
+            <button type="submit" class="mdui-btn mdui-color-purple" onclick="exportExcel('export/collegeCount')">导出完成人数</button>
             <canvas class="chartjs-render-monitor" id="myChart"></canvas>
 
             <h1 class="mdui-text-center">各导员成绩详情</h1>
-            <button type="submit" class="mdui-btn mdui-color-theme" onclick="exportExcel()">export excel</button>
+            <button type="submit" class="mdui-btn mdui-color-theme" onclick="exportExcel('/export/advisorScore')">导出导员成绩</button>
+            <button type="submit" class="mdui-btn mdui-color-green" style="color: white !important;" onclick="exportExcel('/export/advisorEvaluate')">导出主观回答</button>
             <table id="table" class="mdui-table mdui-table-hoverable mdui-m-b-4" data-toggle="table" data-locale="zh-CN">
                 <thead>
                     <tr>
@@ -79,10 +81,19 @@
 
         <script type="text/javascript">
 
-            function exportExcel(){
-                $.get("/export/advisorScore");
-                window.open("/export/advisorScore");
-                alert("asdfasdf");
+            function exportExcel(url) {
+                $.ajax({
+                    type:'get',
+                    url: '/export/authority',
+                    //data: {},
+                    success: function (result) {
+                        if(result.msg==="导出成功"){
+                            window.open(url);
+                        }else {
+                        }
+                        alert(result.msg);
+                    }
+                })
             }
             /*<![CDATA[*/
             var labels = [(${collegeNames})];
