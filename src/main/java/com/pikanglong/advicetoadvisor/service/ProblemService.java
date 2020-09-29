@@ -22,4 +22,9 @@ public interface ProblemService {
     List<OptionEntity> getOptionsByProblemIdOrderByScoreDESC(int id);
 
     OptionEntity getOptionByAnswer(AnswerEntity answerEntity);
+
+    List<ProblemEntity> getProblemEntity(int type);
+
+    ProblemEntity getProblemById(int problemId);
+
 }

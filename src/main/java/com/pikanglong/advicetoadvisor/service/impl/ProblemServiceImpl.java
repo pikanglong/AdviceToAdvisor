@@ -1,6 +1,7 @@
 package com.pikanglong.advicetoadvisor.service.impl;
 
 import com.pikanglong.advicetoadvisor.entity.AnswerEntity;
+import com.pikanglong.advicetoadvisor.entity.ExportCollegeEntity;
 import com.pikanglong.advicetoadvisor.entity.OptionEntity;
 import com.pikanglong.advicetoadvisor.entity.ProblemEntity;
 import com.pikanglong.advicetoadvisor.mapper.AnswerMapper;
@@ -57,5 +58,17 @@ public class ProblemServiceImpl implements ProblemService {
     public OptionEntity getOptionByAnswer(AnswerEntity answerEntity) {
         OptionEntity optionEntity = problemMapper.selectOptionByAnswer(answerEntity);
         return optionEntity;
+    }
+
+    @Override
+    public List<ProblemEntity> getProblemEntity(int type) {
+        List<ProblemEntity> problemList = problemMapper.selectProblemsByType(type);
+        return problemList;
+    }
+
+    @Override
+    public ProblemEntity getProblemById(int problemId) {
+        ProblemEntity problemEntitiy = problemMapper.selectProblemById(problemId);
+        return problemEntitiy;
     }
 }

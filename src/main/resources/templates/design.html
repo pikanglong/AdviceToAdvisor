@@ -54,7 +54,7 @@
                                 <label class="mdui-textfield-label" for="score" th:case="3">分值C</label>
                                 <label class="mdui-textfield-label" for="score" th:case="4">分值D</label>
                                 <label class="mdui-textfield-label" for="score" th:case="5">分值E</label>
-                                <input class="mdui-textfield-input" type="text" th:value="${o.score}" name="score" id="score" required>
+                                <input class="mdui-textfield-input" type="text" th:value="${o.score}" name="score" id="score" oninput="value=value.replace(/[^\d]/g,'')" required>
                             </div>
                         </div>
                     </div>

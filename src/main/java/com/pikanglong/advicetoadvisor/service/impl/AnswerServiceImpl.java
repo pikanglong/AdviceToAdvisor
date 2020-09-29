@@ -39,4 +39,10 @@ public class AnswerServiceImpl implements AnswerService {
         List<AnswerEntity> answerEntities = answerMapper.getAnswersByAdvisorId(advisorEntity.getId());
         return answerEntities;
     }
+
+    @Override
+    public List<AnswerEntity> getAnswersByProblemId(int problem) {
+        List<AnswerEntity> answerEntities = answerMapper.getAnswersByProblemId(problem);
+        return answerEntities;
+    }
 }

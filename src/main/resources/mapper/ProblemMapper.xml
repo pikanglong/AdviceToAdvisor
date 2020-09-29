@@ -52,4 +52,12 @@
     <select id="selectOptionByAnswer" resultType="com.pikanglong.advicetoadvisor.entity.OptionEntity">
         SELECT * FROM options WHERE problemId=#{problemId} AND `rank`=#{content} AND deletedAt IS NULL;
     </select>
+
+    <select id="selectProblemsByType" resultMap="selectProblemsResultMap">
+        SELECT * FROM problems WHERE type=#{type} AND deletedAt IS NULL;
+    </select>
+
+    <select id="selectProblemById" resultMap="selectProblemsResultMap">
+        SELECT * FROM problems WHERE id=#{problemId} AND deletedAt IS NULL;
+    </select>
 </mapper>
