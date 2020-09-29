@@ -21,7 +21,7 @@
     <select id="getAnswersByProblemId" resultType="com.pikanglong.advicetoadvisor.entity.AnswerEntity">
         SELECT * FROM answers WHERE problemId=#{problemId} AND deletedAt IS NULL;
     </select>
-
+  
     <update id="deleteAnswers">
         UPDATE answers SET deletedAt=NOW();
     </update>
